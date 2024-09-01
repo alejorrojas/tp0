@@ -1,6 +1,7 @@
 #include "utils.h"
 
 
+
 void* serializar_paquete(t_paquete* paquete, int bytes)
 {
 	void * magic = malloc(bytes);
@@ -18,25 +19,47 @@ void* serializar_paquete(t_paquete* paquete, int bytes)
 
 int crear_conexion(char *ip, char* puerto)
 {
-	struct addrinfo hints;
-	struct addrinfo *server_info;
+    struct addrinfo hints;
+    struct addrinfo *server_info;
+    int err;
 
-	memset(&hints, 0, sizeof(hints));
-	hints.ai_family = AF_INET;
-	hints.ai_socktype = SOCK_STREAM;
-	hints.ai_flags = AI_PASSIVE;
+    // Inicializa la estructura hints con ceros
+    memset(&hints, 0, sizeof(hints));
+    hints.ai_family = AF_INET;       // IPv4
+    hints.ai_socktype = SOCK_STREAM; // TCP
+    hints.ai_flags = AI_PASSIVE;     // Auto rellenar la IP
 
-	getaddrinfo(ip, puerto, &hints, &server_info);
+    // Obtén la dirección del servidor
+    err = getaddrinfo(ip, puerto, &hints, &server_info);
+    if (err != 0) {
+        printf("Error en getaddrinfo: %s", gai_strerror(err));
+        abort();
+    }
 
-	// Ahora vamos a crear el socket.
-	int socket_cliente = 0;
+    // Crear el socket
+    int socket_cliente = socket(server_info->ai_family, server_info->ai_socktype, server_info->ai_protocol);
+    if (socket_cliente == -1) {
+        printf("Error al crear el socket: %s", strerror(errno));
+        freeaddrinfo(server_info);
+        abort();
+    }
 
-	// Ahora que tenemos el socket, vamos a conectarlo
+    // Conectar el socket al servidor
+    err = connect(socket_cliente, server_info->ai_addr, server_info->ai_addrlen);
+    if (err == -1) {
+        printf("Error al conectar con el servidor: %s", strerror(errno));
+        close(socket_cliente);
+        freeaddrinfo(server_info);
+        abort();
+    }
 
+    // Liberar la estructura server_info después de usarla
+    freeaddrinfo(server_info);
 
-	freeaddrinfo(server_info);
+	printf('Yes! Conexion al servidor exitosa');
 
-	return socket_cliente;
+    // Si todo salió bien, devuelve el socket conectado
+    return socket_cliente;
 }
 
 void enviar_mensaje(char* mensaje, int socket_cliente)
