@@ -32,7 +32,8 @@ int main(void)
 	ip = config_get_string_value(config, "IP");
 	puerto = config_get_string_value(config, "PUERTO");
 
-	log_info(logger, config);
+	log_info(logger, "Lei el valor:%s, de la IP: %s, del PUERTO: %s", valor, ip, puerto);
+
 
 
 	// Usando el config creado previamente, leemos los valores del config y los 
@@ -70,7 +71,7 @@ t_log* iniciar_logger(void)
 
 	if(nuevo_logger == NULL){
 		printf("Error al inicializar el logger\n");
-		exit(1);
+		abort();
 	}
 	return nuevo_logger;
 }
@@ -82,7 +83,7 @@ t_config* iniciar_config(void)
 
 	if(nuevo_config == NULL){
 		printf("Error al inicializar el config\n");
-		exit(1);
+		abort();
 	}
 
 	return nuevo_config;
