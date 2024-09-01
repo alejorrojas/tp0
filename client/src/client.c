@@ -56,7 +56,7 @@ int main(void)
 	conexion = crear_conexion(ip, puerto);
 
 	log_info(logger, "Enviando mensaje...");
-	enviar_mensaje("Porfa!", conexion);
+	enviar_mensaje("Primer mensaje-------!", conexion);
 
 	// Armamos y enviamos el paquete
 	paquete(conexion);
@@ -117,11 +117,33 @@ void paquete(int conexion)
 	char* leido;
 	t_paquete* paquete;
 
+   paquete = crear_paquete();
 	// Leemos y esta vez agregamos las lineas al paquete
+	while(1){
 
+		leido = readline("> ");
+	// El resto, las vamos leyendo y logueando hasta recibir un string vacío
+		
+		if(strcmp(leido, "exit") == 0){
+			printf("Fin de la lectura\n");
+            enviar_paquete(paquete, conexion);
+			break;
+		}
+		if(strcmp(leido, "send") == 0){
+			printf("Enviando paquete....\n");
+            enviar_paquete(paquete, conexion);
+		}
+		if(strcmp(leido, "send") != 0){
+			printf("Agregando a paquete...\n");
+		    agregar_a_paquete(paquete, leido, strlen(leido) + 1);
+		}
+			
+ 
+	}
 
 	// ¡No te olvides de liberar las líneas y el paquete antes de regresar!
-	
+	free(leido);
+	eliminar_paquete(paquete);
 }
 
 void terminar_programa(int conexion, t_log* logger, t_config* config)
@@ -133,6 +155,8 @@ void terminar_programa(int conexion, t_log* logger, t_config* config)
 	if(config != NULL){
 		config_destroy(config);
 	}
+
+	liberar_conexion(conexion);
 	
 	/* Y por ultimo, hay que liberar lo que utilizamos (conexion, log y config) 
 	  con las funciones de las commons y del TP mencionadas en el enunciado */
