@@ -56,7 +56,7 @@ int crear_conexion(char *ip, char* puerto)
     // Liberar la estructura server_info después de usarla
     freeaddrinfo(server_info);
 
-	printf('Yes! Conexion al servidor exitosa');
+	printf("Yes! Conexion al servidor exitosa");
 
     // Si todo salió bien, devuelve el socket conectado
     return socket_cliente;

@@ -56,7 +56,7 @@ int main(void)
 	conexion = crear_conexion(ip, puerto);
 
 	log_info(logger, "Enviando mensaje...");
-	enviar_mensaje('Porfa!', conexion);
+	enviar_mensaje("Porfa!", conexion);
 
 	// Armamos y enviamos el paquete
 	paquete(conexion);
